@@ -1,6 +1,7 @@
 #!/bin/bash
 
 kubectl delete -f ./application_deploy
-helm delete --purge consul
-helm delete --purge vault
-helm delete --purge mariadb
+helm uninstall consul
+helm uninstall vault
+helm uninstall mariadb
+helm uninstall pq

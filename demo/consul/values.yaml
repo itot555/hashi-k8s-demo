@@ -28,7 +28,7 @@ global:
   #   image: "consul:1.5.0"
   #   # Consul Enterprise 1.5.0
   #   image: "hashicorp/consul-enterprise:1.5.0-ent"
-  image: consul:1.9.0
+  image: consul:1.10.1
 
   # array of objects containing image pull secret names that will be applied to
   # each service account.
@@ -51,7 +51,7 @@ global:
   # If using acls.manageSystemACLs then must be >= 0.10.1.
   # If using connect inject then must be >= 0.10.1.
   # If using Consul Enterprise namespaces, must be >= 0.12.
-  imageK8S: "hashicorp/consul-k8s:0.21.0"
+  imageK8S: "hashicorp/consul-k8s-control-plane"
 
   # datacenter is the name of the datacenter that the agents should register
   # as. This can't be changed once the Consul cluster is up and running
@@ -161,7 +161,6 @@ global:
 
   # Configure ACLs.
   acls:
-
     # If true, the Helm chart will automatically manage ACL tokens and policies
     # for all Consul and consul-k8s components. This requires Consul >= 1.4 and consul-k8s >= 0.14.0.
     manageSystemACLs: false
@@ -217,7 +216,7 @@ global:
   # The lifecycle sidecar ensures the Consul services are always registered with
   # their local consul clients and is used by the ingress/terminating/mesh gateways
   # as well as with every connect-injected service.
-  lifecycleSidecarContainer:
+  consulSidecarContainer:
     resources:
       requests:
         memory: "25Mi"
@@ -229,7 +228,7 @@ global:
   # imageEnvoy is the name (and tag) of the Envoy Docker image used for the
   # connect-injected sidecar proxies and the mesh, terminating, and ingress gateways.
   # See https://www.consul.io/docs/connect/proxies/envoy for full compatibility matrix between Consul and Envoy.
-  imageEnvoy: "envoyproxy/envoy-alpine:v1.14.4"
+  imageEnvoy: "envoyproxy/envoy-alpine:v1.18.4"
 
   # openshift contains configuration for running this Helm chart
   # on the Red Hat OpenShift platform.
@@ -303,7 +302,8 @@ server:
   # extraVolumes is a list of extra volumes to mount. These will be exposed
   # to Consul in the path `/consul/userconfig/<name>/`. The value below is
   # an array of objects, examples are shown below.
-  extraVolumes: []
+  extraVolumes:
+    []
     # - type: secret (or "configMap")
     #   name: my-secret
     #   load: false # if true, will add to `-config-dir` to load by Consul
@@ -365,7 +365,8 @@ server:
   # used to include proxy settings required for cloud auto-join feature,
   # in case kubernetes cluster is behind egress http proxies. Additionally, it could be used to configure
   # custom consul parameters.
-  extraEnvironmentVars: {}
+  extraEnvironmentVars:
+    {}
     # http_proxy: http://localhost:3128,
     # https_proxy: http://localhost:3128,
     # no_proxy: internal.domain.com
@@ -462,7 +463,8 @@ client:
   # extraVolumes is a list of extra volumes to mount. These will be exposed
   # to Consul in the path `/consul/userconfig/<name>/`. The value below is
   # an array of objects, examples are shown below.
-  extraVolumes: []
+  extraVolumes:
+    []
     # - type: secret (or "configMap")
     #   name: my-secret
     #   load: false # if true, will add to `-config-dir` to load by Consul
@@ -509,7 +511,8 @@ client:
   # used to include proxy settings required for cloud auto-join feature,
   # in case kubernetes cluster is behind egress http proxies. Additionally, it could be used to configure
   # custom consul parameters.
-  extraEnvironmentVars: {}
+  extraEnvironmentVars:
+    {}
     # http_proxy: http://localhost:3128,
     # https_proxy: http://localhost:3128,
     # no_proxy: internal.domain.com
@@ -810,15 +813,6 @@ connectInject:
   # The Docker image for Consul to use when performing Connect injection.
   # Defaults to global.image.
   imageConsul: null
-
-  # Resource settings for connect inject pods.
-  resources:
-    requests:
-      memory: "50Mi"
-      cpu: "50m"
-    limits:
-      memory: "50Mi"
-      cpu: "50m"
 
   # namespaceSelector is the selector for restricting the webhook to only
   # specific namespaces. This should be set to a multiline string.
@@ -1296,8 +1290,8 @@ ingressGateways:
   # each is `name`, though they can also contain any of the fields in
   # `defaults`. Values defined here override the defaults except in the
   # case of annotations where both will be applied.
-  gateways:
-    - name: ingress-gateway
+  #gateways:
+  #  - name: ingress-gateway
 
 # Configuration options for terminating gateways. Default values for all
 # terminating gateways are defined in `terminatingGateways.defaults`. Any of
