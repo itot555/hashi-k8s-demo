@@ -11,11 +11,11 @@ If using TFE, use the GOOGLE_CREDENTIALS environment variable. Also the JSON cre
 ```bash
 GOOGLE_CREDENTIALS: {"type": "service_account","project_id": "klaas","private_key_id":.......... 
 ````
-1. Fill out terraform.tfvars with your values
+1. Fill out `variables.tf` with your values
 
 2. plan/apply
 ```bash
-terraform apply --auto-approve;
+terraform apply --auto-approve
 ```
 
 3. Copy the command for  "connecting" to your k8s cluster from the terraform output.
@@ -24,11 +24,15 @@ gcloud container clusters get-credentials your-cluster-name --zone us-central1-c
 ```
 
 4. Deploy Consul/Vault/Mariadb/Python-transit-app. This takes a minute or two as there are a bunch of sleeps setup in the script.
+
+Before deploying, confirm whether `consul` or `vault` are running in your local environment. If running, stop `consul` and `vault`.
+
 ```bash
 cd demo
 ./full_stack_deploy.sh
 ```
 cat that script if you want to see how to deploy each of the above by hand/manually.
+
 
 
 ## Teardown
